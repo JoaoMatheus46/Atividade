@@ -1,253 +1,115 @@
 
-const listaBotoes = document.querySelectorAll('.filtro');
-const listaImagens = document.querySelectorAll('.miniatura');
-const totalImagens = document.querySelector('#totalImagens');
-const galeria = document.querySelector('.galeria');
+    const botoes = document.querySelectorAll('.filtro');
+    const imagens = document.querySelectorAll('.miniatura');
+    const galeria = document.querySelector('.galeria');
+    const total = document.querySelector('#totalImagens');
 
-const modal = document.querySelector('#modal');
-const btnFechar = document.querySelector('#fechar');
-const btnAnterior = document.querySelector('#anterior');
-const btnProximo = document.querySelector('#proximo');
+    const modal = document.querySelector('#modal');
+    const fechar = document.querySelector('#fechar');
+    const anterior = document.querySelector('#anterior');
+    const proximo = document.querySelector('#proximo');
 
-const imagemModal = document.querySelector('#imagemModal');
-const contador = document.querySelector('#contador');
-const nomeImagem = document.querySelector('#nomeImagem');
-const descricaoImagem = document.querySelector('#descricaoImagem');
-const categoriaImagem = document.querySelector('#categoriaImagem');
-const localImagem = document.querySelector('#localImagem');
+    const imagemModal = document.querySelector('#imagemModal');
+    const contador = document.querySelector('#contador');
+    const nome = document.querySelector('#nomeImagem');
+    const descricao = document.querySelector('#descricaoImagem');
+    const categoria = document.querySelector('#categoriaImagem');
+    const local = document.querySelector('#localImagem');
 
-let imagensVisiveis = [];
-let indiceAtual = 0;
-let ultimoElementoFocado = null;
+    let visiveis = [];
+    let indice = 0;
 
-// Salva as classes originais do mosaico no HTML.
-const classesOriginais = Array.from(listaImagens).map((imagem) => ({
-    destaque: imagem.classList.contains('destaque'),
-    horizontal: imagem.classList.contains('horizontal'),
-    vertical: imagem.classList.contains('vertical')
-}));
+    const classes = [...imagens].map(img => ({
+        destaque: img.classList.contains('destaque'),
+        horizontal: img.classList.contains('horizontal'),
+        vertical: img.classList.contains('vertical')
+    }));
 
-// Atualiza a lista de imagens visíveis.
-function atualizarImagensVisiveis() {
-    imagensVisiveis = Array.from(listaImagens).filter(
-        (imagem) => !imagem.classList.contains('oculta')
-    );
-
-    totalImagens.textContent =
-        `Exibindo ${imagensVisiveis.length} de ${listaImagens.length} imagens`;
-}
-
-// Restaura o mosaico original.
-function restaurarMosaico() {
-    listaImagens.forEach((imagem, indice) => {
-        imagem.classList.add('miniatura');
-
-        imagem.classList.remove(
-            'destaque',
-            'horizontal',
-            'vertical'
-        );
-
-        if (classesOriginais[indice].destaque) {
-            imagem.classList.add('destaque');
-        }
-
-        if (classesOriginais[indice].horizontal) {
-            imagem.classList.add('horizontal');
-        }
-
-        if (classesOriginais[indice].vertical) {
-            imagem.classList.add('vertical');
-        }
-    });
-}
-
-// Remove as classes especiais nos filtros de categoria.
-function aplicarMiniaturasSimples() {
-    listaImagens.forEach((imagem) => {
-        imagem.classList.add('miniatura');
-
-        imagem.classList.remove(
-            'destaque',
-            'horizontal',
-            'vertical'
-        );
-    });
-}
-
-// Filtra as imagens e altera o layout.
-function filtrarImagens(categoria) {
-    fecharModal();
-
-    if (categoria === 'todas') {
-        // Todas: mantém o mosaico original.
-        galeria.classList.remove('filtro-simples');
-        restaurarMosaico();
-    } else {
-        // Natureza, Cidades e Carros: miniaturas uniformes.
-        galeria.classList.add('filtro-simples');
-        aplicarMiniaturasSimples();
+    function atualizar() {
+        visiveis = [...imagens].filter(img => !img.classList.contains('oculta'));
+        total.textContent = `Exibindo ${visiveis.length} de ${imagens.length} imagens`;
     }
 
-    listaImagens.forEach((imagem) => {
-        const categoriaAtual =
-            imagem.dataset.categoria.toLowerCase();
+    function filtrar(filtro) {
+        fecharModal();
 
-        if (
-            categoria === 'todas' ||
-            categoriaAtual === categoria
-        ) {
-            imagem.classList.remove('oculta');
-            imagem.tabIndex = 0;
-        } else {
-            imagem.classList.add('oculta');
-            imagem.tabIndex = -1;
-        }
-    });
+        galeria.classList.toggle('filtro-simples', filtro !== 'todas');
 
-    atualizarImagensVisiveis();
-    indiceAtual = 0;
-}
+        imagens.forEach((img, i) => {
+            img.classList.remove('destaque', 'horizontal', 'vertical');
 
-// Eventos dos botões de filtro.
-listaBotoes.forEach((botao) => {
-    botao.addEventListener('click', () => {
-        const categoria = botao.dataset.filtro;
+            if (filtro === 'todas') {
+                Object.keys(classes[i]).forEach(classe => {
+                    if (classes[i][classe]) img.classList.add(classe);
+                });
+            }
 
-        listaBotoes.forEach((item) => {
-            item.classList.remove('ativo');
+            img.classList.toggle(
+                'oculta',
+                filtro !== 'todas' && img.dataset.categoria.toLowerCase() !== filtro
+            );
+            img.tabIndex = img.classList.contains('oculta') ? -1 : 0;
         });
 
-        botao.classList.add('ativo');
+        botoes.forEach(btn => btn.classList.toggle('ativo', btn.dataset.filtro === filtro));
 
-        filtrarImagens(categoria);
-    });
-});
-
-// Atualiza o conteúdo do modal.
-function mostrarImagem(indice) {
-    if (imagensVisiveis.length === 0) {
-        return;
+        atualizar();
+        indice = 0;
     }
 
-    indiceAtual =
-        (indice + imagensVisiveis.length) %
-        imagensVisiveis.length;
+    function mostrar(i) {
+        if (!visiveis.length) return;
 
-    const imagem = imagensVisiveis[indiceAtual];
+        indice = (i + visiveis.length) % visiveis.length;
+        const img = visiveis[indice];
 
-    const titulo =
-        imagem.dataset.titulo || imagem.alt || 'Imagem';
-
-    const descricao =
-        imagem.dataset.descricao || 'Sem descrição disponível.';
-
-    const categoria =
-        imagem.dataset.categoria || 'Sem categoria';
-
-    const local =
-        imagem.dataset.local || 'Sem local informado';
-
-    imagemModal.src = imagem.src;
-    imagemModal.alt = titulo;
-
-    nomeImagem.textContent = titulo;
-    descricaoImagem.textContent = descricao;
-
-    categoriaImagem.textContent =
-        categoria.charAt(0).toUpperCase() +
-        categoria.slice(1);
-
-    localImagem.textContent = local;
-
-    contador.textContent =
-        `${indiceAtual + 1} de ${imagensVisiveis.length}`;
-}
-
-function abrirModal(imagem) {
-    atualizarImagensVisiveis();
-
-    indiceAtual = imagensVisiveis.indexOf(imagem);
-
-    if (indiceAtual === -1) {
-        return;
+        imagemModal.src = img.src;
+        imagemModal.alt = img.alt;
+        nome.textContent = img.dataset.titulo || img.alt;
+        descricao.textContent = img.dataset.descricao || 'Sem descrição.';
+        categoria.textContent = img.dataset.categoria || 'Sem categoria';
+        local.textContent = img.dataset.local || 'Não informado';
+        contador.textContent = `${indice + 1} de ${visiveis.length}`;
     }
 
-    ultimoElementoFocado = imagem;
+    function abrir(img) {
+        atualizar();
+        indice = visiveis.indexOf(img);
+        if (indice < 0) return;
 
-    mostrarImagem(indiceAtual);
-
-    modal.classList.add('ativo');
-    modal.setAttribute('aria-hidden', 'false');
-
-    btnFechar.focus();
-}
-
-function fecharModal() {
-    if (!modal.classList.contains('ativo')) {
-        return;
+        mostrar(indice);
+        modal.classList.add('ativo');
+        modal.setAttribute('aria-hidden', 'false');
+        fechar.focus();
     }
 
-    modal.classList.remove('ativo');
-    modal.setAttribute('aria-hidden', 'true');
-
-    if (
-        ultimoElementoFocado &&
-        document.contains(ultimoElementoFocado) &&
-        !ultimoElementoFocado.classList.contains('oculta')
-    ) {
-        ultimoElementoFocado.focus();
+    function fecharModal() {
+        modal.classList.remove('ativo');
+        modal.setAttribute('aria-hidden', 'true');
     }
-}
 
-listaImagens.forEach((imagem) => {
-    imagem.addEventListener('click', () => {
-        abrirModal(imagem);
+    botoes.forEach(btn =>
+        btn.addEventListener('click', () => filtrar(btn.dataset.filtro))
+    );
+
+    imagens.forEach(img =>
+        img.addEventListener('click', () => abrir(img))
+    );
+
+    fechar.addEventListener('click', fecharModal);
+    anterior.addEventListener('click', () => mostrar(indice - 1));
+    proximo.addEventListener('click', () => mostrar(indice + 1));
+
+    modal.addEventListener('click', e => {
+        if (e.target === modal) fecharModal();
     });
 
-    imagem.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            abrirModal(imagem);
-        }
+    document.addEventListener('keydown', e => {
+        if (!modal.classList.contains('ativo')) return;
+
+        if (e.key === 'Escape') fecharModal();
+        if (e.key === 'ArrowLeft') mostrar(indice - 1);
+        if (e.key === 'ArrowRight') mostrar(indice + 1);
     });
-});
 
-btnFechar.addEventListener('click', fecharModal);
-
-
-btnProximo.addEventListener('click', () => {
-    mostrarImagem(indiceAtual + 1);
-});
-
-btnAnterior.addEventListener('click', () => {
-    mostrarImagem(indiceAtual - 1);
-});
-
-
-document.addEventListener('keydown', (event) => {
-    if (!modal.classList.contains('ativo')) {
-        return;
-    }
-
-    if (event.key === 'Escape') {
-        fecharModal();
-    }
-
-    if (event.key === 'ArrowLeft') {
-        mostrarImagem(indiceAtual - 1);
-    }
-
-    if (event.key === 'ArrowRight') {
-        mostrarImagem(indiceAtual + 1);
-    }
-});
-
-modal.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        fecharModal();
-    }
-});
-
-
-filtrarImagens('todas');
+    filtrar('todas');
