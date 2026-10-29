@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria Mosaico - Filtros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Galeria de Imagens</h1>
+        <p>Explore nossas imagens por categoria</p>
+    </header>
+
+    <nav class="filtros" aria-label="Filtros de categoria">
+        <button class="filtro ativo" data-filtro="todas">Todas</button>
+        <button class="filtro" data-filtro="natureza">Natureza</button>
+        <button class="filtro" data-filtro="cidades">Cidades</button>
+        <button class="filtro" data-filtro="carros">Carros</button>
+    </nav>
+
+    <p id="totalImagens" class="total"></p>
+
+    <main class="galeria">
+        <img 
+        src="./img/Cidade/Hollywood.jpg" 
+        alt="Hollywood" 
+        class="miniatura destaque" 
+        data-categoria="cidades" 
+        data-titulo="Hollywood" 
+        data-descricao="Uma paisagem urbana vibrante com iluminação e arquitetura icônica." 
+        data-local="Hollywood, Los Angeles - EUA" 
+        tabindex="0">
+
+        <img 
+        src="./img/Carro/lambo.jpg" 
+        alt="Lamborghini" 
+        class="miniatura horizontal" 
+        data-categoria="carros" 
+        data-titulo="Lamborghini" 
+        data-descricao="Carro esportivo de alto desempenho com design agressivo e moderno." 
+        tabindex="0">
+
+        <img 
+        src="./img/Cidade/Miami.jpg" 
+        alt="Miami" 
+        class="miniatura horizontal" 
+        data-categoria="cidades" 
+        data-titulo="Miami" 
+        data-descricao="Paisagem costeira com prédios modernos e clima tropical exuberante." 
+        data-local="Miami Beach, Flórida - EUA" 
+        tabindex="0">
+
+        <img 
+        src="img/Natureza/Mar.jpg" 
+        alt="Mar" 
+        class="miniatura vertical" 
+        data-categoria="natureza" 
+        data-titulo="Mar"
+        data-descricao="Cena tranquila do litoral com águas calmas e reflexos suaves." 
+        tabindex="0">
+
+        <img 
+        src="img/Cidade/Londres.jpg" 
+        alt="Londres" 
+        class="miniatura" 
+        data-categoria="cidades" 
+        data-titulo="Londres" 
+        data-descricao="Vista urbana com monumentos clássicos e atmosfera histórica." 
+        data-local="Londres, Inglaterra" 
+        tabindex="0">
+
+        <img 
+        src="img/Carro/McLaren.jpg" 
+        alt="McLaren" 
+        class="miniatura horizontal" 
+        data-categoria="carros" 
+        data-titulo="McLaren" 
+        data-descricao="Supercarro de luxo com aerodinâmica sofisticada e tecnologia premium." 
+        tabindex="0">
+
+        <img 
+        src="./img/Natureza/Montanha.jpg" 
+        alt="Montanha" 
+        class="miniatura" 
+        data-categoria="natureza"
+        data-titulo="Montanha" 
+        data-descricao="Vista panorâmica de uma formação rochosa cercada por vegetação e céu limpo." 
+        tabindex="0">
+
+        <img 
+        src="img/Carro/Porsche.jpg" 
+        alt="Porsche" 
+        class="miniatura" 
+        data-categoria="carros" 
+        data-titulo="Porsche" 
+        data-descricao="Modelo esportivo com linhas elegantes e desempenho refinado." 
+        tabindex="0">
+
+        <img 
+        src="./img/Natureza/Natureza.jpg"
+        alt="Natureza" 
+        class="miniatura horizontal" 
+        data-categoria="natureza" 
+        data-titulo="Natureza" 
+        data-descricao="Paisagem natural exuberante com rios, árvores e luz intensa do amanhecer." 
+        tabindex="0">
+    </main>
+
+    <div id="modal" class="modal" aria-hidden="true">
+        <div class="modal-conteudo" role="dialog" aria-modal="true" aria-labelledby="nomeImagem">
+            <button id="fechar" class="fechar" aria-label="Fechar modal">&times;</button>
+            <button id="anterior" class="navegacao anterior" aria-label="Imagem anterior">&#10094;</button>
+
+            <div class="modal-box">
+                <div class="modal-imagem-wrap">
+                    <img src="" alt="Imagem ampliada" id="imagemModal">
+                </div>
+
+                <aside class="modal-detalhes">
+                    <span id="contador" class="contador">1 de 1</span>
+                    <h2 id="nomeImagem">Título da imagem</h2>
+                    <p id="descricaoImagem" class="descricao">Descrição da imagem.</p>
+
+                    <div class="meta">
+                        <p><strong>Categoria:</strong> <span id="categoriaImagem">-</span></p>
+                        <p><strong>Local:</strong> <span id="localImagem">-</span></p>
+                    </div>
+                </aside>
+            </div>
+
+            <button id="proximo" class="navegacao proximo" aria-label="Próxima imagem">&#10095;</button>
+        </div>
+    </div>
+
+    <script src="script/script.js"></script>
+</body>
+</html>
